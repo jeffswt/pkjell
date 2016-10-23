@@ -1,5 +1,22 @@
 
 var blog = {
+    url : {
+        args : {},
+        parse : function() {
+            var uri = window.location.href;
+            var dict = {};
+            if (uri.lastIndexOf('?') > 0) {
+                var params_list = uri.substring(uri.lastIndexOf("?") + 1, uri.length);
+                var params = params_list.split('&');
+                for (i = 0; i < params.length; i++) {
+                    var tuple = params[i].split('=');
+                    dict[tuple[0]] = tuple[1];
+                }
+            }
+            blog.url.args = dict;
+            return dict;
+        }
+    },
     json : {
         loading : false,
         loaded : false,
@@ -10,8 +27,8 @@ var blog = {
                 return ;
             }
             blog.json.loading = true;
-            json_event = $.getJSON('/data/index.json');
-            wait_json = function(json_event, callback, args) {
+            var json_event = $.getJSON('/data/index.json');
+            var wait_json = function(json_event, callback, args) {
                 if (json_event.readyState <= 1) {
                     setTimeout(wait_json, 15, json_event, callback, args);
                     return ;
@@ -54,20 +71,20 @@ var blog = {
                 if (rem_count <= 0)
                     return ;
                 // Retrieving object
-                jdata = blog.json.data;
+                var jdata = blog.json.data;
                 if (blog.contents.current_page >= jdata.entries.length)
                     return ;
-                obj = jdata.entries[blog.contents.current_page];
+                var obj = jdata.entries[blog.contents.current_page];
                 blog.contents.current_page++;
                 // Getting data from server
-                html_event = $.get('/data/' + obj['date-id'] + '-' + obj['id'] + '-brief.html');
-                wait_html = function(html_event, load_articles) {
+                var html_event = $.get('/data/' + obj['date-id'] + '-' + obj['id'] + '-brief.html');
+                var wait_html = function(html_event, load_articles) {
                     if (html_event.readyState <= 1) {
                         setTimeout(wait_html, 15, html_event, load_articles);
                         return ;
                     }
                     // Injecting data into HTML.
-                    html_data = html_event.responseText;
+                    var html_data = html_event.responseText;
                     $('#blog-contents-end-flag').before(html_data);
                     load_articles(rem_count - 1);
                     return ;
@@ -84,23 +101,6 @@ var blog = {
             }, [])
             // Finished procedure
             return true;
-        }
-    },
-    url : {
-        args : {},
-        parse : function() {
-            uri = window.location.href;
-            dict = {};
-            if (uri.lastIndexOf('?') > 0) {
-                params_list = uri.substring(uri.lastIndexOf("?") + 1, uri.length);
-                params = params_list.split('&');
-                for (i = 0; i < params.length; i++) {
-                    tuple = params[i].split('=');
-                    dict[tuple[0]] = tuple[1];
-                }
-            }
-            blog.url.args = dict;
-            return dict;
         }
     }
 };
