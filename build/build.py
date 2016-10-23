@@ -258,6 +258,21 @@ def main():
         if 'title' not in headers:
             headers['title'] = 'Untitled'
         # Resolved headers, Building template.
+        brief = body.split('<!-- More -->')[0]
+        rend_data = {
+            'title': headers['title'],
+            'title-id': re.sub(r'^[0-9\-]*(.*?)\.md$', r'\1', fname),
+            'date': headers['date'],
+            'date-id': fmt_time(headers['date'], 'Identifier'),
+            'date-str': fmt_time(headers['date'], 'British'),
+            'categories': headers['categories'],
+            'tags': headers['tags'],
+            'content-body': pandoc.convert('markdown', 'html', body),
+            'content-brief': pandoc.convert('markdown', 'html', body.split('<!-- More -->')[0]),
+        }
+        body_html = render_page(read_file('/assets/templates/post.html'), data=rend_data)
+        brief_html = render_page(read_file('/assets/templates/brief.html'), data=rend_data)
+        print(body_html, '\n\n\n\n\n', brief_html)
         pass
     # Saving JSON data.
     jindex.save(j_data)
