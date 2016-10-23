@@ -6,7 +6,7 @@
         • <a class="post-cat" href="/categories?cat=${cat}">${cat}</a>
         % endfor
     </p>
-    <h4><a href="/articles?date=${data['date-id']}&id=${data['title-id']}" class="post-title" title="${data['title']}">${data['title']}</a></h4>
+    <h4><a href="/article?date=${data['date-id']}&id=${data['title-id']}" class="post-title" title="${data['title']}">${data['title']}</a></h4>
 </header>
 <div class="post-description">
 ${data['content-brief']}

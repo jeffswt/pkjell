@@ -8,6 +8,7 @@ import os
 import pandoc
 import re
 
+
 """ consq_sub -- Consecutively substitute patterns in RegEx. """
 def consq_sub(s, *args):
     if len(args) % 2 != 0:
@@ -110,7 +111,7 @@ def get_native_path(path):
 
 """ Opens file, relative to source folder. """
 def open_file(file_name, *args, **kwargs):
-    return open(get_native_path(file_name), *args, **kwargs)
+    return open(clean_path(get_native_path(file_name)), *args, **kwargs)
 
 """ Reads file content, relative to source folder. """
 def read_file(file_name):
@@ -146,6 +147,12 @@ def lsdir(path, nowalk=False, strip_source=True):
     a.sort()
     return a
 
+def make_dirs(path):
+    path = clean_path(get_native_path(path))
+    if os.path.exists(path):
+        return True
+    return os.makedirs(path)
+
 class jindex:
     """ Loads JSON index data from file. """
     @classmethod
@@ -172,23 +179,18 @@ class jindex:
         d = {
             'indexes': {
                 'index': {
-                    'location': '/index.html',
                     'hash': get_hash(''),
                 },
                 'archive': {
-                    'location': '/archive.html',
                     'hash': get_hash(''),
                 },
                 'categories': {
-                    'location': '/categories.html',
                     'hash': get_hash(''),
                 },
                 'tags': {
-                    'location': '/tags.html',
                     'hash': get_hash(''),
                 },
                 'article': {
-                    'location': '/article.html',
                     'hash': get_hash(''),
                 },
             },
@@ -230,10 +232,15 @@ def main():
                 'script': read_file('/assets/templates/%s.js' % name),
             })
         j_data['indexes'][name] = {
-            'location': './%s.html' % name,
             'hash': get_hash(temp_data),
         }
-        write_file('/%s.html' % name, temp_data)
+        if name != 'index':
+            make_dirs('/%s/' % name)
+            path = '/%s/index.html' % name
+        else:
+            path = '/index.html'
+        write_file(path, temp_data)
+        j_data['indexes'][name]['hash'] = get_hash(read_file(path))
         log('Template of index "%s" built.', name)
         pass
     # Resolving new articles
