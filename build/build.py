@@ -50,6 +50,11 @@ def diff(a, b, ordered=False):
         c = c_
     return c
 
+""" Console logger """
+def log(s, *args):
+    s = s % tuple(args)
+    print(s)
+
 """ Mako renderer """
 def render_page(html_data, **additional_arguments):
     if type(html_data) == bytes:
@@ -81,8 +86,8 @@ def fmt_time(o, t):
     if t == 'British':
         return '%d %s %d' % (o['day'], ['', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][o['month']], o['year'])
     elif t == 'Identifier':
-        return '%s-%s-%s' % (str(o['year']).ljust(2, '0'), str(o['month']).ljust(2, '0'), str(o['day']).ljust(2, '0'))
-    return '%s-%s-%s %s:%s:%s' % (str(o['year']).ljust(2, '0'), str(o['month']).ljust(2, '0'), str(o['day']).ljust(2, '0'), str(o['hour']).ljust(2, '0'), str(o['minute']).ljust(2, '0'), str(o['second']).ljust(2, '0'))
+        return '%s-%s-%s' % (str(o['year']).rjust(2, '0'), str(o['month']).rjust(2, '0'), str(o['day']).rjust(2, '0'))
+    return '%s-%s-%s %s:%s:%s' % (str(o['year']).rjust(2, '0'), str(o['month']).rjust(2, '0'), str(o['day']).rjust(2, '0'), str(o['hour']).rjust(2, '0'), str(o['minute']).rjust(2, '0'), str(o['second']).rjust(2, '0'))
 
 """ clean_path -- Make path comfortable under POSIX. """
 def clean_path(path):
@@ -188,8 +193,10 @@ class jindex:
     @classmethod
     def create_entry(self):
         d = {
-            'id': '1970-01-01-null',
-            'date': '1970-01-01 00:00:00',
+            'id': 'null',
+            'title': 'NULL',
+            'date': parse_time('1970-01-01 00:00:00'),
+            'date-id': '1970-01-01',
             'categories': [],
             'tags': [],
             'hash': get_hash(''),
@@ -201,13 +208,14 @@ class jindex:
 """ Main function. """
 def main():
     # Getting JSON data
+    log('Loading previously saved data...')
     j_data = jindex.load()
     # Reading templates (on-disk)
     temp_src = diff(
         sub_every(lsdir('/assets/templates'), r'^/assets/templates/(.*)\..*?$', r'\1'),
     ['frame', 'post', 'brief'])
     # Compiling index templates
-    j_data = dict()
+    j_data['indexes'] = dict()
     for name in temp_src:
         temp_data = render_page(
             read_file('/assets/templates/frame.html'),
@@ -215,16 +223,22 @@ def main():
                 'content': read_file('/assets/templates/%s.html' % name),
                 'script': read_file('/assets/templates/%s.js' % name),
             })
-        j_data[name] = {
+        j_data['indexes'][name] = {
             'location': './%s.html' % name,
             'hash': get_hash(temp_data),
         }
         write_file('/%s.html' % name, temp_data)
+        log('Template of index "%s" built.', name)
         pass
     # Resolving new articles
     temp_src = select_match(
         sub_every(lsdir('/posts/', nowalk=True), r'^/posts/(.*)$', r'\1'),
     r'\.md$')
+    # Retrieving index of ids
+    article_idx = dict()
+    for i in range(0, len(j_data['entries'])):
+        obj = j_data['entries'][i]
+        article_idx['%s-%s' % (obj['date-id'], obj['id'])] = i
     # Compiling articles
     for fname in temp_src:
         # Parsing lines
@@ -255,13 +269,26 @@ def main():
             headers[i] = c
         if 'date' not in headers or not re.findall(r'^\d+-\d+-\d+ \d+:\d+:\d+$', headers['date']):
             headers['date'] = '1970-01-01 00:00:00'
+        headers['date'] = parse_time(headers['date'])
         if 'title' not in headers:
             headers['title'] = 'Untitled'
+        # Checking if this post exists in database
+        title_id = re.sub(r'^[0-9\-]*(.*?)\.md$', r'\1', fname)
+        doc_id = '%s-%s' % (fmt_time(headers['date'], 'Identifier'), title_id)
+        src_hash = get_hash(fdata)
+        if doc_id in article_idx:
+            obj_id = article_idx[doc_id]
+            obj = j_data['entries'][obj_id]
+            if src_hash == obj['hash-src']:
+                if get_hash(read_file('/data/%s-post.html' % doc_id)) == obj['hash']:
+                    log('Skipping document "%s".', doc_id)
+                    continue
+            pass
         # Resolved headers, Building template.
         brief = body.split('<!-- More -->')[0]
         rend_data = {
             'title': headers['title'],
-            'title-id': re.sub(r'^[0-9\-]*(.*?)\.md$', r'\1', fname),
+            'title-id': title_id,
             'date': headers['date'],
             'date-id': fmt_time(headers['date'], 'Identifier'),
             'date-str': fmt_time(headers['date'], 'British'),
