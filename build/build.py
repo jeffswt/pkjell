@@ -23,15 +23,31 @@ def sub_every(l, pattern, sub):
         nl.append(re.sub(pattern, sub, s))
     return nl
 
+""" select_match -- Select all which matches the string """
+def select_match(l, pattern):
+    nl = []
+    for s in l:
+        if re.findall(pattern, s):
+            nl.append(s)
+    nl.sort()
+    return nl
+
 """ Diffs two lists / sets. Returns a - b. """
-def diff(a, b):
+def diff(a, b, ordered=False):
     if not hasattr(a, '__iter__') or type(a) == str: a = [a,]
     if not hasattr(b, '__iter__') or type(b) == str: b = [b,]
-    a_ = set(a); b_ = set(b);
-    c_ = set();
-    for i in a_:
-        if i not in b_: c_.add(i)
-    c = sorted(list(c_))
+    if not ordered:
+        a_ = set(a); b_ = set(b);
+        c_ = set();
+        for i in a_:
+            if i not in b_: c_.add(i)
+        c = sorted(list(c_))
+    else:
+        a_ = list(a); b_ = list(b);
+        c_ = list();
+        for i in a_:
+            if i not in b_: c_.append(i)
+        c = c_
     return c
 
 """ Mako renderer """
