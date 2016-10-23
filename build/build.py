@@ -187,7 +187,7 @@ def main():
     # Reading templates (on-disk)
     temp_src = diff(
         sub_every(lsdir('/assets/templates'), r'^/assets/templates/(.*)\..*?$', r'\1'),
-    ['frame', 'post'])
+    ['frame', 'post', 'brief'])
     # Compiling index templates
     j_data = dict()
     for name in temp_src:
