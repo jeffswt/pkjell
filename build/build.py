@@ -219,6 +219,27 @@ def main():
                 header.append(i)
                 break
             header.append(i)
+        # Splitting body
+        body = fdata[len('\n'.join(header)):]
+        # Parsing headers
+        header = diff(header, '---', ordered=True)
+        headers = dict()
+        for i in header:
+            a = re.sub(r'^(.*?):.*$', r'\1', i)
+            b = re.sub(r'^.*?:[ ]*(.*)$', r'\1', i)
+            headers[a] = b
+        for i in ['categories', 'tags']: # Some array-typed
+            if i not in headers:
+                headers[i] = []
+            a = headers[i]
+            b = a.split(',') if ',' in a else [a,]
+            c = list(re.sub(r'^[ ]*(.*?)[ ]*$', r'\1', j) for j in b)
+            headers[i] = c
+        if 'date' not in headers or not re.findall(r'^\d+-\d+-\d+ \d+:\d+:\d+$', headers['date']):
+            headers['date'] = '1970-01-01 00:00:00'
+        if 'title' not in headers:
+            headers['title'] = 'Untitled'
+        # Resolved headers, Building template.
         pass
     # Saving JSON data.
     jindex.save(j_data)
