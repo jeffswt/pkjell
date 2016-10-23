@@ -66,6 +66,24 @@ def render_page(html_data, **additional_arguments):
 def get_hash(data):
     return binascii.hexlify(hashlib.sha256(data.encode('utf-8', 'ignore')).digest()).decode('utf-8', 'ignore')
 
+""" Parse time """
+def parse_time(s):
+    a = s.split(' ')
+    b = a[0].split('-')
+    c = a[1].split(':')
+    r = {'year':int(b[0]), 'month':int(b[1]), 'day':int(b[2]), 'hour':int(c[0]), 'minute':int(c[1]), 'second':int(c[2])}
+    return r
+
+""" Format time to given style. """
+def fmt_time(o, t):
+    if type(o) == str:
+        o = parse_time(o)
+    if t == 'British':
+        return '%d %s %d' % (o['day'], ['', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][o['month']], o['year'])
+    elif t == 'Identifier':
+        return '%s-%s-%s' % (str(o['year']).ljust(2, '0'), str(o['month']).ljust(2, '0'), str(o['day']).ljust(2, '0'))
+    return '%s-%s-%s %s:%s:%s' % (str(o['year']).ljust(2, '0'), str(o['month']).ljust(2, '0'), str(o['day']).ljust(2, '0'), str(o['hour']).ljust(2, '0'), str(o['minute']).ljust(2, '0'), str(o['second']).ljust(2, '0'))
+
 """ clean_path -- Make path comfortable under POSIX. """
 def clean_path(path):
     path = consq_sub(path,
