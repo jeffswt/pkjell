@@ -303,8 +303,13 @@ def main():
             else:
                 log('Noticed source change on document "%s".', doc_id)
             pass
-        # Resolved headers, Building template.
+        # Defining link convertion utilities
+        def link_convert(inp):
+            return '\n'.join(list(re.sub(r'!\[(.*?)\]\(\./', r'![\1](/posts/', i) for i in inp.split('\n')))
         brief = body.split('<!-- More -->')[0]
+        body = link_convert(body)
+        brief = link_convert(brief)
+        # Resolved headers, Building template.
         rend_data = {
             'title': headers['title'],
             'title-id': title_id,
