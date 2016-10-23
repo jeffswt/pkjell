@@ -87,7 +87,13 @@ def fmt_time(o, t):
         return '%d %s %d' % (o['day'], ['', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][o['month']], o['year'])
     elif t == 'Identifier':
         return '%s-%s-%s' % (str(o['year']).rjust(2, '0'), str(o['month']).rjust(2, '0'), str(o['day']).rjust(2, '0'))
-    return '%s-%s-%s %s:%s:%s' % (str(o['year']).rjust(2, '0'), str(o['month']).rjust(2, '0'), str(o['day']).rjust(2, '0'), str(o['hour']).rjust(2, '0'), str(o['minute']).rjust(2, '0'), str(o['second']).rjust(2, '0'))
+    elif t == 'Array':
+        return [str(o['year']).rjust(4, '0'), str(o['month']).rjust(2, '0'), str(o['day']).rjust(2, '0'), str(o['hour']).rjust(2, '0'), str(o['minute']).rjust(2, '0'), str(o['second']).rjust(2, '0')]
+    elif t == 'EasySplit':
+        return '%s-%s-%s-%s-%s-%s' % tuple(fmt_time(o, 'Array'))
+    elif t == 'Standard':
+        return '%s-%s-%s %s:%s:%s' % tuple(fmt_time(o, 'Array'))
+    return fmt_time(o, 'Standard')
 
 """ clean_path -- Make path comfortable under POSIX. """
 def clean_path(path):
@@ -195,7 +201,7 @@ class jindex:
         d = {
             'id': 'null',
             'title': 'NULL',
-            'date': parse_time('1970-01-01 00:00:00'),
+            'date': '1970-01-01-00-00-00',
             'date-id': '1970-01-01',
             'categories': [],
             'tags': [],
@@ -265,6 +271,8 @@ def main():
                 headers[i] = []
             a = headers[i]
             b = a.split(',') if ',' in a else [a,]
+            while '' in b:
+                b.remove('')
             c = list(re.sub(r'^[ ]*(.*?)[ ]*$', r'\1', j) for j in b)
             headers[i] = c
         if 'date' not in headers or not re.findall(r'^\d+-\d+-\d+ \d+:\d+:\d+$', headers['date']):
@@ -283,6 +291,10 @@ def main():
                 if get_hash(read_file('/data/%s-post.html' % doc_id)) == obj['hash']:
                     log('Skipping document "%s".', doc_id)
                     continue
+                else:
+                    log('Noticed HTML output change on document "%s", this is deprecated.', doc_id)
+            else:
+                log('Noticed source change on document "%s".', doc_id)
             pass
         # Resolved headers, Building template.
         brief = body.split('<!-- More -->')[0]
@@ -306,12 +318,13 @@ def main():
         jentry = jindex.create_entry()
         jentry['id'] = title_id
         jentry['title'] = headers['title']
-        jentry['date'] = headers['date']
+        jentry['date'] = fmt_time(headers['date'], 'EasySplit')
         jentry['date-id'] = fmt_time(headers['date'], 'Identifier')
         jentry['categories'] = headers['categories']
-        jentry['tags'] = headers['tags'],
+        jentry['tags'] = headers['tags']
         jentry['hash'] = get_hash(read_file('/data/%s-post.html' % doc_id))
         jentry['hash-src'] = get_hash(fdata)
+        # print(jentry)
         # Injecting JSON entry
         if doc_id in article_idx:
             obj_id = article_idx[doc_id]
