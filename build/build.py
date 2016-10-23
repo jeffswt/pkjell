@@ -93,9 +93,29 @@ def lsdir(path, strip_source=True):
     a.sort()
     return a
 
+class jindex:
+    """ Loads JSON index data from file. """
+    def load(self):
+        try:
+            f = open_file('/data/index.json', 'r', encoding='utf-8')
+            s = f.read()
+            f.close()
+        except:
+            s = self.create()
+        d = json.loads(s)
+        return d
+    """ Dumps JSON index data to file. """
+    def save(self, data):
+        s = json.dumps(indent=4)
+        f = open_file('/data/index.json', 'w', encoding='utf-8')
+        f.write(s)
+        f.close()
+        return
+    pass
 
 """ Main function. """
 def main():
+    # j_data = jindex.load()
     # Reading templates (on-disk)
     temp_src = diff(
         sub_every(lsdir('/assets/templates'), r'^/assets/templates/(.*)\..*?$', r'\1'),
@@ -109,6 +129,7 @@ def main():
                 'script': read_file('/assets/templates/%s.js' % name),
             }))
         pass
+    # jindex.save(j_data)
     return 0
 
 if __name__ == '__main__':
