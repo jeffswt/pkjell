@@ -1,4 +1,6 @@
 
+import binascii
+import hashlib
 import json
 import mako
 import mako.template
@@ -43,6 +45,10 @@ def render_page(html_data, **additional_arguments):
             **additional_arguments if additional_arguments else dict()
         ).decode('utf-8', 'ignore')
     return html_data
+
+""" SHA256 invoker """
+def get_hash(data):
+    return binascii.hexlify(hashlib.sha256(data.encode('utf-8', 'ignore')).digest()).decode('utf-8', 'ignore')
 
 """ clean_path -- Make path comfortable under POSIX. """
 def clean_path(path):
@@ -95,23 +101,26 @@ def lsdir(path, strip_source=True):
 
 class jindex:
     """ Loads JSON index data from file. """
+    @classmethod
     def load(self):
         try:
             f = open_file('/data/index.json', 'r', encoding='utf-8')
             s = f.read()
+            d = json.loads(s)
             f.close()
         except:
-            s = self.create()
-        d = json.loads(s)
+            d = self.create()
         return d
     """ Dumps JSON index data to file. """
+    @classmethod
     def save(self, data):
-        s = json.dumps(indent=4)
+        s = json.dumps(data, indent=4, sort_keys=True)
         f = open_file('/data/index.json', 'w', encoding='utf-8')
         f.write(s)
         f.close()
         return
     """ Create JSON data, initially. """
+    @classmethod
     def create(self):
         d = {
             'indexes': {
@@ -140,6 +149,7 @@ class jindex:
         }
         return d
     """ Create JSON data of an entry, initially of an empty file. """
+    @classmethod
     def create_entry(self):
         d = {
             'id': '1970-01-01_null',
@@ -153,21 +163,29 @@ class jindex:
 
 """ Main function. """
 def main():
-    # j_data = jindex.load()
+    # Getting JSON data
+    j_data = jindex.load()
     # Reading templates (on-disk)
     temp_src = diff(
         sub_every(lsdir('/assets/templates'), r'^/assets/templates/(.*)\..*?$', r'\1'),
     'frame')
     # Creating file
+    j_data = dict()
     for name in temp_src:
-        write_file('/%s.html' % name, render_page(
+        temp_data = render_page(
             read_file('/assets/templates/frame.html'),
             data = {
                 'content': read_file('/assets/templates/%s.html' % name),
                 'script': read_file('/assets/templates/%s.js' % name),
-            }))
+            })
+        j_data[name] = {
+            'location': './%s.html' % name,
+            'hash': get_hash(temp_data),
+        }
+        write_file('/%s.html' % name, temp_data)
         pass
-    # jindex.save(j_data)
+    # Saving JSON data.
+    jindex.save(j_data)
     return 0
 
 if __name__ == '__main__':
