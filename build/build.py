@@ -111,6 +111,44 @@ class jindex:
         f.write(s)
         f.close()
         return
+    """ Create JSON data, initially. """
+    def create(self):
+        d = {
+            'indexes': {
+                'index': {
+                    'location': '/index.html',
+                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                },
+                'archive': {
+                    'location': '/archive.html',
+                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                },
+                'categories': {
+                    'location': '/categories.html',
+                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                },
+                'tags': {
+                    'location': '/tags.html',
+                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                },
+                'article': {
+                    'location': '/article.html',
+                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                },
+            },
+            'entries': [],
+        }
+        return d
+    """ Create JSON data of an entry, initially of an empty file. """
+    def create_entry(self):
+        d = {
+            'id': '1970-01-01_null',
+            'date': '1970-01-01 00:00',
+            'categories': [],
+            'tags': [],
+            'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        }
+        return d
     pass
 
 """ Main function. """
