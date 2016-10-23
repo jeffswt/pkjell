@@ -1,6 +1,6 @@
 
 function blogClass() {
-    function contentsClass() {
+    function jsonClass(master) {
         this.loading = false;
         this.load = function() {
             // Setting thread lock status
@@ -22,8 +22,8 @@ function blogClass() {
         };
         return this;
     };
-    this.contents = new contentsClass();
-    function urlClass() {
+    this.contents = new contentsClass(this);
+    function urlClass(master) {
         this.args = {};
         this.parse = function() {
             uri = window.location.href;
@@ -41,7 +41,7 @@ function blogClass() {
         };
         return this;
     };
-    this.url = new urlClass();
+    this.url = new urlClass(this);
     return this;
 };
 blog = new blogClass();
