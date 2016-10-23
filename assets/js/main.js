@@ -17,6 +17,19 @@ var blog = {
             return dict;
         }
     },
+    background : {
+        load : function() {
+            $.getJSON('/assets/images/sidebar.json').success(
+            function(event) {
+                var len = event.backgrounds.length;
+                // Setting random background
+                var id = Math.floor(Math.random() * len * 10007) % len;
+                var targ_link = event.backgrounds[id];
+                $('.cover').css('background-image', 'url(' + targ_link + ')');
+            });
+            return true;
+        }
+    },
     json : {
         loading : false,
         loaded : false,
@@ -104,3 +117,5 @@ var blog = {
         }
     }
 };
+
+blog.background.load();
