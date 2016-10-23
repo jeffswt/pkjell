@@ -101,11 +101,13 @@ def write_file(file_name, data):
     return
 
 """ lsdir(path) -- Lists all files under current directory. """
-def lsdir(path, strip_source=True):
+def lsdir(path, nowalk=False, strip_source=True):
     n_path = clean_path(get_native_path(path))
     strip_path = n_path[len(clean_path(path)):]
     a = []
     for i, j, k in os.walk(n_path):
+        if nowalk and i != n_path:
+            continue
         for p in k:
             p = os.path.join(i, p)
             p = clean_path(p)
@@ -142,23 +144,23 @@ class jindex:
             'indexes': {
                 'index': {
                     'location': '/index.html',
-                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                    'hash': get_hash(''),
                 },
                 'archive': {
                     'location': '/archive.html',
-                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                    'hash': get_hash(''),
                 },
                 'categories': {
                     'location': '/categories.html',
-                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                    'hash': get_hash(''),
                 },
                 'tags': {
                     'location': '/tags.html',
-                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                    'hash': get_hash(''),
                 },
                 'article': {
                     'location': '/article.html',
-                    'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                    'hash': get_hash(''),
                 },
             },
             'entries': [],
@@ -168,11 +170,12 @@ class jindex:
     @classmethod
     def create_entry(self):
         d = {
-            'id': '1970-01-01_null',
-            'date': '1970-01-01 00:00',
+            'id': '1970-01-01-null',
+            'date': '1970-01-01 00:00:00',
             'categories': [],
             'tags': [],
-            'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+            'hash': get_hash(''),
+            'hash-src': get_hash(''),
         }
         return d
     pass
@@ -184,8 +187,8 @@ def main():
     # Reading templates (on-disk)
     temp_src = diff(
         sub_every(lsdir('/assets/templates'), r'^/assets/templates/(.*)\..*?$', r'\1'),
-    'frame')
-    # Creating file
+    ['frame', 'post'])
+    # Compiling index templates
     j_data = dict()
     for name in temp_src:
         temp_data = render_page(
