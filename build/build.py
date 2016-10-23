@@ -203,6 +203,23 @@ def main():
         }
         write_file('/%s.html' % name, temp_data)
         pass
+    # Resolving new articles
+    temp_src = select_match(
+        sub_every(lsdir('/posts/', nowalk=True), r'^/posts/(.*)$', r'\1'),
+    r'\.md$')
+    # Compiling articles
+    for fname in temp_src:
+        # Parsing lines
+        fdata = read_file('/posts/%s' % fname)
+        flines = fdata.split('\n')
+        # Retrieving headers
+        header = []
+        for i in flines:
+            if i == '---' and '---' in header:
+                header.append(i)
+                break
+            header.append(i)
+        pass
     # Saving JSON data.
     jindex.save(j_data)
     return 0
