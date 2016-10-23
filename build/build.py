@@ -272,7 +272,27 @@ def main():
         }
         body_html = render_page(read_file('/assets/templates/post.html'), data=rend_data)
         brief_html = render_page(read_file('/assets/templates/brief.html'), data=rend_data)
-        print(body_html, '\n\n\n\n\n', brief_html)
+        # Writing files
+        write_file('/data/%s-post.html' % doc_id, body_html)
+        write_file('/data/%s-brief.html' % doc_id, brief_html)
+        # Making JSON entry
+        jentry = jindex.create_entry()
+        jentry['id'] = title_id
+        jentry['title'] = headers['title']
+        jentry['date'] = headers['date']
+        jentry['date-id'] = fmt_time(headers['date'], 'Identifier')
+        jentry['categories'] = headers['categories']
+        jentry['tags'] = headers['tags'],
+        jentry['hash'] = get_hash(read_file('/data/%s-post.html' % doc_id))
+        jentry['hash-src'] = get_hash(fdata)
+        # Injecting JSON entry
+        if doc_id in article_idx:
+            obj_id = article_idx[doc_id]
+            j_data['entries'][obj_id] = jentry
+        else:
+            j_data['entries'].append(jentry)
+            article_idx[doc_id] = len(j_data['entries']) - 1
+        log('Compiled document "%s".', doc_id)
         pass
     # Saving JSON data.
     jindex.save(j_data)
