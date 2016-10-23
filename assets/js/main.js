@@ -2,6 +2,33 @@
 function blogClass() {
     function jsonClass(master) {
         this.loading = false;
+        this.loaded = false;
+        this.data = {};
+        this.load = function(callback, args) {
+            if (this.loaded) {
+                callback(args);
+                return ;
+            }
+            this.loading = true;
+            json_event = $.getJSON('/data/index.json');
+            wait_json = function(self, json_event, callback, args) {
+                if (json_event.readyState <= 1) {
+                    setTimeout(wait_json, 15, self, json_event, callback, args);
+                    return ;
+                }
+                self.loading = false;
+                self.loaded = true;
+                self.data = json_event.responseJSON;
+                if (callback)
+                    callback(args);
+                return ;
+            };
+            wait_json(this, json_event, callback, args);
+            return ;
+        };
+        return this;
+    };
+    this.json = new jsonClass(this);
         this.load = function() {
             // Setting thread lock status
             if (this.loading)
