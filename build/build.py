@@ -216,13 +216,15 @@ class jindex:
 """ Main function. """
 def main():
     # Getting JSON data
-    log('Loading previously saved data...')
+    log('==> Loading site JSON database...')
     j_data = jindex.load()
+    log(' .. Procedure complete.')
     # Reading templates (on-disk)
     temp_src = diff(
         sub_every(lsdir('/assets/templates'), r'^/assets/templates/(.*)\..*?$', r'\1'),
     ['frame', 'post', 'brief'])
     # Compiling index templates
+    log('==> Building site templates...')
     j_data['indexes'] = dict()
     for name in temp_src:
         temp_data = render_page(
@@ -241,8 +243,8 @@ def main():
             path = '/index.html'
         write_file(path, temp_data)
         j_data['indexes'][name]['hash'] = get_hash(read_file(path))
-        log('Template of index "%s" built.', name)
-        pass
+        log(' .. Built template "%s".', name)
+    log(' .. Procedure complete.')
     # Resolving new articles
     temp_src = select_match(
         sub_every(lsdir('/posts/', nowalk=True), r'^/posts/(.*)$', r'\1'),
@@ -254,6 +256,7 @@ def main():
         article_idx['%s-%s' % (obj['date-id'], obj['id'])] = i
     # Compiling articles
     for fname in temp_src:
+        log('==> Compiling source of post "%s".', fname)
         # Parsing lines
         fdata = read_file('/posts/%s' % fname)
         flines = fdata.split('\n')
@@ -277,12 +280,13 @@ def main():
             if i not in headers:
                 headers[i] = []
                 continue
-            a = re.sub(r'\[\]', r'', headers[i])
+            a = re.sub(r'\[(.*?)\]', r'\1', headers[i])
             b = a.split(',') if ',' in a else [a,]
             while '' in b:
                 b.remove('')
             c = list(re.sub(r'^[ ]*(.*?)[ ]*$', r'\1', j) for j in b)
             headers[i] = c
+        # Overriding invalid header entries
         if 'date' not in headers or not re.findall(r'^\d+-\d+-\d+ \d+:\d+:\d+$', headers['date']):
             headers['date'] = '1970-01-01 00:00:00'
         headers['date'] = parse_time(headers['date'])
@@ -297,12 +301,12 @@ def main():
             obj = j_data['entries'][obj_id]
             if src_hash == obj['hash-src']:
                 if get_hash(read_file('/data/%s-post.html' % doc_id)) == obj['hash']:
-                    log('Skipping document "%s".', doc_id)
+                    log(' .. Skipping document.')
                     continue
                 else:
-                    log('Noticed HTML output change on document "%s", this is deprecated.', doc_id)
+                    log(' .. Detected HTML output change on document.')
             else:
-                log('Noticed source change on document "%s".', doc_id)
+                log(' .. Detected source change on document.')
             pass
         # Defining link convertion utilities
         def link_convert(inp):
@@ -362,10 +366,12 @@ def main():
         else:
             j_data['entries'].append(jentry)
             article_idx[doc_id] = len(j_data['entries']) - 1
-        log('Compiled document "%s".', doc_id)
+        log(' .. Compiled document "%s".', doc_id)
         pass
     # Saving JSON data.
+    log('==> Updating database...')
     jindex.save(j_data)
+    log(' .. Procedure complete.')
     return 0
 
 if __name__ == '__main__':
