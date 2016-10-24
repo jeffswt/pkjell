@@ -324,10 +324,13 @@ def main():
                     ext = (os.path.splitext(p_path[1])[1].lower())[1:]
                     # If it is an image, then convert image
                     if ext in {'png', 'bmp', 'tiff', 'tif', 'jpeg', 'jpg', 'gif'}:
-                        f_handle = PIL.Image.open(get_native_path('/posts/%s/%s' % (p_path[0], p_path[1])), 'r')
-                        img_out = '/data/%s-%s.jpeg' % (doc_id, os.path.splitext(p_path[1])[0])
-                        log(' .. * Exporting image "%s"...', p_path[1])
-                        f_handle.save(get_native_path(img_out), format='jpeg', quality=45, progressive=True)
+                        try:
+                            f_handle = PIL.Image.open(get_native_path('/posts/%s/%s' % (p_path[0], p_path[1])), 'r')
+                            img_out = '/data/%s-%s.jpeg' % (doc_id, os.path.splitext(p_path[1])[0])
+                            log(' .. * Exporting image "%s"...', p_path[1])
+                            f_handle.save(get_native_path(img_out), format='jpeg', quality=45, progressive=True)
+                        except Exception:
+                            log('!!! Error exporting image "%s".', p_path[1])
                         new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'![\1](%s)' % img_out, new_ret)
                     # If it is text, then embed it.
                     elif ext in {'txt', 'log', 'c', 'cpp', 'py'}:
