@@ -276,7 +276,8 @@ def main():
         for i in ['categories', 'tags']: # Some array-typed
             if i not in headers:
                 headers[i] = []
-            a = headers[i]
+                continue
+            a = re.sub(r'\[\]', r'', headers[i])
             b = a.split(',') if ',' in a else [a,]
             while '' in b:
                 b.remove('')

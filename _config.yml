@@ -1,0 +1,17 @@
+#
+###################################
+# Jekyll configuration
+####################################
+#
+timezone:          Asia/Shanghai
+markdown:          kramdown
+highlighter:       rouge
+permalink:         /data/:year-:month-:day-:title-post
+exclude:           /posts/
+
+kramdown:
+  auto_ids:       true
+  footnote_nr:    1
+  entity_output:  as_char
+  toc_levels:     1..6
+  enable_coderay: false
