@@ -310,6 +310,8 @@ def main():
         brief = body.split('<!-- More -->')[0]
         body = link_convert(body)
         brief = link_convert(brief)
+        body_content = pandoc.convert('markdown', 'html', body)
+        brief_content = pandoc.convert('markdown', 'html', brief)
         # Resolved headers, Building template.
         rend_data = {
             'title': headers['title'],
@@ -319,11 +321,27 @@ def main():
             'date-str': fmt_time(headers['date'], 'British'),
             'categories': headers['categories'],
             'tags': headers['tags'],
-            'content-body': pandoc.convert('markdown', 'html', body),
-            'content-brief': pandoc.convert('markdown', 'html', body.split('<!-- More -->')[0]),
+            'content-body': body_content,
+            'content-brief': brief_content,
         }
-        body_html = render_page(read_file('/assets/templates/post.html'), data=rend_data)
-        brief_html = render_page(read_file('/assets/templates/brief.html'), data=rend_data)
+        # Error handling, rendering page
+        if len(rend_data['content-body']) <= 0:
+            log('!!! Markdown compiler might have encountered problems.')
+        try:
+            body_html = render_page(read_file('/assets/templates/post.html'), data=rend_data)
+            brief_html = render_page(read_file('/assets/templates/brief.html'), data=rend_data)
+            def drop_chars(a, b):
+                c = ''
+                for i in a:
+                    if i not in b:
+                        c += i
+                return c
+            body_html = drop_chars(body_html, '\r')
+            brief_html = drop_chars(brief_html, '\r')
+        except Exception as e:
+            raise e
+            log('!!! Template convertion in "mako" had encountered problems.')
+            continue
         # Writing files
         write_file('/data/%s-post.html' % doc_id, body_html)
         write_file('/data/%s-brief.html' % doc_id, brief_html)
@@ -337,7 +355,6 @@ def main():
         jentry['tags'] = headers['tags']
         jentry['hash'] = get_hash(read_file('/data/%s-post.html' % doc_id))
         jentry['hash-src'] = get_hash(fdata)
-        # print(jentry)
         # Injecting JSON entry
         if doc_id in article_idx:
             obj_id = article_idx[doc_id]
