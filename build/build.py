@@ -6,6 +6,7 @@ import mako
 import mako.template
 import os
 import pandoc
+import PIL.Image
 import re
 
 
@@ -328,6 +329,22 @@ def main():
                         log(' .. * Exporting image "%s"...', p_path[1])
                         f_handle.save(get_native_path(img_out), format='jpeg', quality=45, progressive=True)
                         new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'![\1](%s)' % img_out, new_ret)
+                    # If it is text, then embed it.
+                    elif ext in {'txt', 'log', 'c', 'cpp', 'py'}:
+                        f_data = read_file('/posts/%s/%s' % (p_path[0], p_path[1]))
+                        log(' .. * Embedding plain test "%s"...', p_path[1])
+                        new_ret = re.sub(r'^.*$', '\n```\n%s\n\n```\n' % f_data, new_ret)
+                    # If it is otherwise, copy it.
+                    else:
+                        f_handle = open_file('/posts/%s/%s' % (p_path[0], p_path[1]), 'rb')
+                        f_data = f_handle.read()
+                        f_handle.close()
+                        new_out = '/data/%s-%s' % (doc_id, p_path[1])
+                        log(' .. * Copying file "%s"...', p_path[1])
+                        f_handle = open_file(new_out, 'wb')
+                        f_handle.write(f_data)
+                        f_handle.close()
+                        new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'![\1](%s)' % new_out, new_ret)
                     # Restoring string in line
                     line = new_ret.join(line.split(pict_path))
                 out.append(line)
