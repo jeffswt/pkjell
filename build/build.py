@@ -310,7 +310,28 @@ def main():
             pass
         # Defining link convertion utilities
         def link_convert(inp):
-            return '\n'.join(list(re.sub(r'!\[(.*?)\]\(\./', r'![\1](/posts/', i) for i in inp.split('\n')))
+            out = []
+            for line in inp.split('\n'):
+                discv = re.findall(r'!\[.*?\]\(\./\d{4}-\d{2}/.*?\)', line)
+                if not discv:
+                    out.append(line)
+                    continue
+                # Found links in this line. Determining whether to...
+                for pict_path in discv:
+                    new_ret = pict_path # To be replaced in original document
+                    p_path = re.sub(r'^!\[.*?\]\(\./(\d{4}-\d{2}/.*?)\)$', r'\1', pict_path).split('/')
+                    ext = (os.path.splitext(p_path[1])[1].lower())[1:]
+                    # If it is an image, then convert image
+                    if ext in {'png', 'bmp', 'tiff', 'tif', 'jpeg', 'jpg', 'gif'}:
+                        f_handle = PIL.Image.open(get_native_path('/posts/%s/%s' % (p_path[0], p_path[1])), 'r')
+                        img_out = '/data/%s-%s.jpeg' % (doc_id, os.path.splitext(p_path[1])[0])
+                        log(' .. * Exporting image "%s"...', p_path[1])
+                        f_handle.save(get_native_path(img_out), format='jpeg', quality=45, progressive=True)
+                        new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'![\1](%s)' % img_out, new_ret)
+                    # Restoring string in line
+                    line = new_ret.join(line.split(pict_path))
+                out.append(line)
+            return '\n'.join(out)
         brief = body.split('<!-- More -->')[0]
         body = link_convert(body)
         brief = link_convert(brief)
