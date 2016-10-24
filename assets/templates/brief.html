@@ -1,9 +1,13 @@
+
 <section class="post">
 <header class="post-header">
     <p class="post-meta">
         <span class="post-date">${data['date-str']}</span>
         % for cat in data['categories']:
-        • <a class="post-cat" href="/categories?cat=${cat}">${cat}</a>
+        • <a class="post-cat" href="/categories?category=${cat}">${cat}</a>
+        % endfor
+        % for tag in data['tags']:
+        • <a class="post-tag" href="/tags?tag=${tag}">${tag}</a>
         % endfor
     </p>
     <h4><a href="/article?date=${data['date-id']}&id=${data['title-id']}" class="post-title" title="${data['title']}">${data['title']}</a></h4>
