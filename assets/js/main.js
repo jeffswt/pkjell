@@ -87,7 +87,8 @@ var blog = {
                 var jdata = blog.json.data;
                 if (blog.contents.current_page >= jdata.entries.length)
                     return ;
-                var obj = jdata.entries[blog.contents.current_page];
+                // Show in reverse order.
+                var obj = jdata.entries[jdata.entries.length - 1 - blog.contents.current_page];
                 blog.contents.current_page++;
                 // Getting data from server
                 var html_event = $.get('/data/' + obj['date-id'] + '-' + obj['id'] + '-brief.html');
