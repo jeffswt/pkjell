@@ -1,5 +1,12 @@
 
 var blog = {
+    utils : {
+        month_to_string : function(a) {
+            b = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            a = parseInt(a);
+            return b[a];
+        }
+    },
     url : {
         args : {},
         parse : function() {
@@ -10,6 +17,8 @@ var blog = {
                 var params = params_list.split('&');
                 for (i = 0; i < params.length; i++) {
                     var tuple = params[i].split('=');
+                    tuple[0] = decodeURIComponent(tuple[0]);
+                    tuple[1] = decodeURIComponent(tuple[1]);
                     dict[tuple[0]] = tuple[1];
                 }
             }
@@ -105,7 +114,7 @@ var blog = {
                 };
                 wait_html(html_event, load_articles);
                 // Calling iteration...
-            }; load_articles(4);
+            }; load_articles(8);
             // Setting thread lock status
             blog.contents.loading = false;
             // Changing icon status

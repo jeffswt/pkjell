@@ -10,7 +10,6 @@ var load_archive = function() {
             // Create new title if needed
             var cur_date_all = obj.date.split('-');
             cur_date = [cur_date_all[0], cur_date_all[1]];
-            console.log(cur_date, last_date);
             if (last_date[0] != cur_date[0] || last_date[1] != cur_date[1]) {
                 $('#blog-archive-flag-begin').after('\
                     <div class="archive-title">\

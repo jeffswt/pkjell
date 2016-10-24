@@ -6,6 +6,7 @@ var load_tags = function() {
     blog.json.load(function(event) {
         var tag_idx = {};
         var jentries = blog.json.data.entries;
+        var show_only = blog.url.args['tag'];
         for (var i = 0; i < jentries.length; i++) {
             var obj = jentries[i];
             // Uploading entry tags...
@@ -25,6 +26,8 @@ var load_tags = function() {
         for (var j = 0; j < tag_lst.length; j++) {
             var tag = tag_lst[j];
             var lis = tag_idx[tag];
+            if (show_only && show_only != tag)
+                continue;
             $('#blog-tags-flag-end').before(
                 '<div class="tag-group">\
                     <h5 class="tag-group-title" name="' + tag + '">' + tag + '</h5>\
