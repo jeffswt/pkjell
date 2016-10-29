@@ -1037,7 +1037,7 @@ footer {
    ========================================================================== */
 html {
     line-height: 1.5;
-    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, "黑体", "Heiti", "华文细黑", "SimHei", sans-serif;
     font-weight: normal;
     color: rgba(0, 0, 0, 0.87);
     -webkit-font-smoothing: antialiased;
@@ -1260,7 +1260,7 @@ pre code {
         color: rgb(249, 160, 145); }
     /* Data.String */
     .sourceCode .st {
-        color: rgb(152, 195, 121); }
+        color: rgb(172, 215, 141); }
     /* Data.String.Escape */
     .sourceCode .ch {
         color: rgb(198, 242, 45); }
