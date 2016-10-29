@@ -5,6 +5,7 @@ import os
 import re
 import socket
 import threading
+import time
 import tornado
 
 import tornado.concurrent
@@ -66,6 +67,13 @@ class StaticHandler(tornado.web.RequestHandler):
     head=get
     pass
 
+def term_watcher():
+    try:
+        tornado.ioloop.IOLoop.instance().start()
+    except Exception as err:
+        pass
+    return 0
+
 def main():
     # Creating web application
     web_app = tornado.web.Application([
@@ -83,8 +91,12 @@ def main():
     web_server.add_sockets(web_sockets)
     # Boot I/O thread for asynchronous purposes
     print(' .. Server started on http://localhost:80.')
-    tornado.ioloop.IOLoop.instance().start()
+    threading.Thread(target=term_watcher, args=[]).start()
+    while True:
+        try: time.sleep(1)
+        except: break
     print('==> Caught signal, terminating server.')
+    tornado.ioloop.IOLoop.instance().close()
     return 0
 
 ret_code = main()
