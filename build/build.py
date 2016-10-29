@@ -8,6 +8,7 @@ import os
 import pandoc
 import PIL.Image
 import re
+import time
 
 
 """ consq_sub -- Consecutively substitute patterns in RegEx. """
@@ -335,8 +336,12 @@ def main():
                     # If it is text, then embed it.
                     elif ext in {'txt', 'log', 'c', 'cpp', 'py'}:
                         f_data = read_file('/posts/%s/%s' % (p_path[0], p_path[1]))
+                        if ext == 'c': f_type = 'C'
+                        elif ext == 'cpp': f_type = 'C++'
+                        elif ext == 'py': f_type = 'Python'
+                        else: f_type = ''
                         log(' .. * Embedding plain test "%s"...', p_path[1])
-                        new_ret = re.sub(r'^.*$', '\n```\n%s\n\n```\n' % f_data, new_ret)
+                        new_ret = re.sub(r'^.*$', '\n```%s\n%s\n\n```\n' % (f_type, f_data), new_ret)
                     # If it is otherwise, copy it.
                     else:
                         f_handle = open_file('/posts/%s/%s' % (p_path[0], p_path[1]), 'rb')
@@ -355,8 +360,8 @@ def main():
         brief = body.split('<!-- More -->')[0]
         body = link_convert(body)
         brief = link_convert(brief)
-        body_content = pandoc.convert('markdown', 'html', body)
-        brief_content = pandoc.convert('markdown', 'html', brief)
+        body_content = pandoc.convert(body)
+        brief_content = pandoc.convert(brief)
         # Resolved headers, Building template.
         rend_data = {
             'title': headers['title'],
@@ -409,12 +414,24 @@ def main():
             article_idx[doc_id] = len(j_data['entries']) - 1
         log(' .. Compiled document "%s".', doc_id)
         pass
-    # Saving JSON data.
+    # Sorting pages according to time...
     log('==> Updating database...')
+    n_sort = []
+    for i in range(0, len(j_data['entries'])):
+        n_sort.append((j_data['entries'][i]['date'], i))
+    n_sort.sort()
+    n_entries = []
+    for i in n_sort:
+        n_entries.append(j_data['entries'][i[1]])
+    j_data['entries'] = n_entries
+    # Saving JSON data.
     jindex.save(j_data)
     log(' .. Procedure complete.')
     return 0
 
 if __name__ == '__main__':
+    t_begin = time.time()
     ret_code = main()
+    t_end = time.time()
+    log('==> Build finished in %.3f seconds.', t_end - t_begin)
     exit(ret_code)

@@ -3,11 +3,12 @@ import subprocess
 
 PANDOC_BIN = 'pandoc'
 
-def convert(input_type, output_type, input_data):
+def convert(input_data):
     proc = subprocess.Popen([
             PANDOC_BIN,
-            '--from', input_type,
-            '--to', output_type,
+            '--from=markdown',
+            '--to=html5',
+            '--mathjax',
         ],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
