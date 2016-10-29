@@ -341,7 +341,7 @@ def main():
                         elif ext == 'py': f_type = 'Python'
                         else: f_type = ''
                         log(' .. * Embedding plain test "%s"...', p_path[1])
-                        new_ret = re.sub(r'^.*$', '\n```%s\n%s\n\n```\n' % (f_type, f_data), new_ret)
+                        new_ret = '\n```%s\n%s\n\n```\n' % (f_type, f_data)
                     # If it is otherwise, copy it.
                     else:
                         f_handle = open_file('/posts/%s/%s' % (p_path[0], p_path[1]), 'rb')
