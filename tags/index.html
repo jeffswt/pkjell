@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Blog Title</title>
+    <meta name="description" content="Blog Description">
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">
+</head>
+
+<body><div class="row">
+    <!-- Navigation bar -->
+    <div class="col s12 m3"><div class="table cover"><div class="cover-card table-cell table-middle">
+        <body color=f0a123>
+        <!-- Avatar -->
+        <img src="/assets/images/avatar.png" alt="" class="avatar">
+        <a href="/" class="author_name">Author Name</a>
+        <span class="author_job">Author Job</span>
+        <span class="author_bio mbm">Author Description</span>
+        <!-- Blog navigation -->
+        <nav class="nav"><ul class="nav-list">
+            <li class="nav-item">
+                <a href="/archive/">Archive</a>
+                <span>/</span>
+            </li>
+            <li class="nav-item">
+                <a href="/categories/">Categories</a>
+                <span>/</span>
+            </li>
+            <li class="nav-item">
+                <a href="/tags/">Tags</a>
+            </li>
+        </ul></nav>
+        <!-- Social Links -->
+        <div class="cover-card"><ul>
+            <li><a href="mailto:example@example.com" class="social-link-item" target="_blank"><i class="fa fa-fw fa-envelope"></i></a></li>
+            <li><a href="https://github.com/" class="social-link-item" target="_blank"><i class="fa fa-fw fa-github"></i></a></li>
+        </ul></div>
+    </div></div></div>
+    <!-- Main body -->
+    <div class="col s12 m9"><div class="post-listing">
+
+<div id="page">
+<header class="page-header">
+    <h2>Tags</h2>
+    <span name="blog-loading-identifier">Loading list...</span>
+</header>
+
+<article class="page-content"><div class="tag-list">
+<div id="blog-tags-flag-end"></div>
+</div></article>
+</div>
+
+        <!-- Footer -->
+        <footer>&copy; Copyright Message.</footer>
+    </div></div>
+</div>
+<!-- Load Javascripts -->
+<script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+<script type="text/javascript" src="/assets/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML,local/local"></script>
+
+<script>
+
+blog.url.parse();
+
+var load_tags = function() {
+    // Calls ajax load procedure.
+    blog.json.load(function(event) {
+        var tag_idx = {};
+        var jentries = blog.json.data.entries;
+        var show_only = blog.url.args['tag'];
+        for (var i = 0; i < jentries.length; i++) {
+            var obj = jentries[i];
+            // Uploading entry tags...
+            var objtag = obj.tags;
+            for (var j = 0; j < obj.tags.length; j++) {
+                if (!tag_idx[objtag[j]])
+                    tag_idx[objtag[j]] = [];
+                tag_idx[objtag[j]] = tag_idx[objtag[j]].concat(obj);
+            }
+        }
+        // Sort by alphabetical order
+        var tag_lst = [];
+        for (var tag in tag_idx)
+            tag_lst = tag_lst.concat(tag);
+        tag_lst.sort();
+        // Received index, now pushing to document
+        for (var j = 0; j < tag_lst.length; j++) {
+            var tag = tag_lst[j];
+            var lis = tag_idx[tag];
+            if (show_only && show_only != tag)
+                continue;
+            $('#blog-tags-flag-end').before(
+                '<div class="tag-group">\
+                    <h5 class="tag-group-title" name="' + tag + '">' + tag + '</h5>\
+                </div>');
+            for (var i = 0; i < lis.length; i++) {
+                var obj = lis[i];
+                $('[name="' + tag + '"].tag-group-title').after('\
+                    <article class="tag-item">\
+                        <a class="tag-item-title" href="/article/?date=' + obj['date-id'] + '&id=' + obj['id'] + '">' + obj['title'] + '</a>\
+                    </article>');
+                continue;
+            }
+            continue;
+        };
+        // Finishing ajax procedure.
+        $('[name="blog-loading-identifier"]').html('');
+        return ;
+    }, []);
+    return ;
+}
+
+load_tags();
+
+</script>
+
+</body>
+</html>

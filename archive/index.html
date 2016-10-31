@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Blog Title</title>
+    <meta name="description" content="Blog Description">
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">
+</head>
+
+<body><div class="row">
+    <!-- Navigation bar -->
+    <div class="col s12 m3"><div class="table cover"><div class="cover-card table-cell table-middle">
+        <body color=f0a123>
+        <!-- Avatar -->
+        <img src="/assets/images/avatar.png" alt="" class="avatar">
+        <a href="/" class="author_name">Author Name</a>
+        <span class="author_job">Author Job</span>
+        <span class="author_bio mbm">Author Description</span>
+        <!-- Blog navigation -->
+        <nav class="nav"><ul class="nav-list">
+            <li class="nav-item">
+                <a href="/archive/">Archive</a>
+                <span>/</span>
+            </li>
+            <li class="nav-item">
+                <a href="/categories/">Categories</a>
+                <span>/</span>
+            </li>
+            <li class="nav-item">
+                <a href="/tags/">Tags</a>
+            </li>
+        </ul></nav>
+        <!-- Social Links -->
+        <div class="cover-card"><ul>
+            <li><a href="mailto:example@example.com" class="social-link-item" target="_blank"><i class="fa fa-fw fa-envelope"></i></a></li>
+            <li><a href="https://github.com/" class="social-link-item" target="_blank"><i class="fa fa-fw fa-github"></i></a></li>
+        </ul></div>
+    </div></div></div>
+    <!-- Main body -->
+    <div class="col s12 m9"><div class="post-listing">
+
+<div id="page">
+<header class="page-header">
+    <h2>Archive</h2>
+    <span name="blog-loading-identifier">Loading list...</span>
+</header>
+
+<article class="page-content"><div class="archive"><div class="timeline" id="timeline">
+<div id="blog-archive-flag-begin"></div>
+
+</div></div></article>
+</div>
+
+        <!-- Footer -->
+        <footer>&copy; Copyright Message.</footer>
+    </div></div>
+</div>
+<!-- Load Javascripts -->
+<script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+<script type="text/javascript" src="/assets/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML,local/local"></script>
+
+<script>
+
+var load_archive = function() {
+    // Calls ajax load procedure.
+    blog.json.load(function(event) {
+        var tag_idx = {};
+        var jentries = blog.json.data.entries;
+        var last_date = ['0000', '00']; // Ensure no duplications
+        for (var i = 0; i < jentries.length; i++) {
+            var obj = jentries[i];
+            // Create new title if needed
+            var cur_date_all = obj.date.split('-');
+            cur_date = [cur_date_all[0], cur_date_all[1]];
+            if (last_date[0] != cur_date[0] || last_date[1] != cur_date[1]) {
+                $('#blog-archive-flag-begin').after('\
+                    <div class="archive-title">\
+                        <h4 class="archive-year">' + blog.utils.month_to_string(cur_date[1]) + ', ' + cur_date[0] + '</h4>\
+                    </div>\
+                    <ul name="blog-archive-' + cur_date[0] + '-' + cur_date[1] + '">\
+                    <div id="blog-archive-' + cur_date[0] + '-' + cur_date[1] + '-flag-begin"></div>\
+                    </ul>');
+                last_date = cur_date;
+            }
+            // Inserting this article into corresponding title
+            $('#blog-archive-' + cur_date[0] + '-' + cur_date[1] + '-flag-begin').after('\
+                <li><div style="width:60px;float:left;">' + cur_date_all[2] + ' ' + blog.utils.month_to_string(cur_date[1]) + '</div>\
+                    <a href="/article/?date=' + obj['date-id'] + '&id=' + obj['id'] + '">' + obj['title'] + '</a>\
+                </li>');
+            continue;
+        }
+        // Finalizing operation...
+        $('[name="blog-loading-identifier"]').html('');
+        return ;
+    }, []);
+    return ;
+}
+
+load_archive();
+
+</script>
+
+</body>
+</html>

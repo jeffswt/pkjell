@@ -1,0 +1,20 @@
+{
+    "entries": [],
+    "indexes": {
+        "archive": {
+            "hash": "c18d91bc6598394b9c6698325f7f83bbea7638c2f01ec98b50fa2d3a56ec578f"
+        },
+        "article": {
+            "hash": "faf54029cc5d184a0582428c6e73ae0161b8e31490361fec3977e584954b707b"
+        },
+        "categories": {
+            "hash": "a07a9cfa992221629c1e9c03fe0523d692670e2108a944626d662862052729d6"
+        },
+        "index": {
+            "hash": "026049e668e4b70dab98f1b3448aa1f7eecf15abe6e63fed9d3ec6d71d4d0eef"
+        },
+        "tags": {
+            "hash": "2de2265b35b5e081ae8e43a23d3a292d1c4ef73157c7cfe473b7d88e9ed30598"
+        }
+    }
+}

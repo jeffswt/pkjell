@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Blog Title</title>
+    <meta name="description" content="Blog Description">
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">
+</head>
+
+<body><div class="row">
+    <!-- Navigation bar -->
+    <div class="col s12 m3"><div class="table cover"><div class="cover-card table-cell table-middle">
+        <body color=f0a123>
+        <!-- Avatar -->
+        <img src="/assets/images/avatar.png" alt="" class="avatar">
+        <a href="/" class="author_name">Author Name</a>
+        <span class="author_job">Author Job</span>
+        <span class="author_bio mbm">Author Description</span>
+        <!-- Blog navigation -->
+        <nav class="nav"><ul class="nav-list">
+            <li class="nav-item">
+                <a href="/archive/">Archive</a>
+                <span>/</span>
+            </li>
+            <li class="nav-item">
+                <a href="/categories/">Categories</a>
+                <span>/</span>
+            </li>
+            <li class="nav-item">
+                <a href="/tags/">Tags</a>
+            </li>
+        </ul></nav>
+        <!-- Social Links -->
+        <div class="cover-card"><ul>
+            <li><a href="mailto:example@example.com" class="social-link-item" target="_blank"><i class="fa fa-fw fa-envelope"></i></a></li>
+            <li><a href="https://github.com/" class="social-link-item" target="_blank"><i class="fa fa-fw fa-github"></i></a></li>
+        </ul></div>
+    </div></div></div>
+    <!-- Main body -->
+    <div class="col s12 m9"><div class="post-listing">
+
+<div id="page">
+<header class="page-header">
+    <h2>Categories</h2>
+    <span name="blog-loading-identifier">Loading list...</span>
+</header>
+
+<article class="page-content"><div class="tag-list">
+<div id="blog-categories-flag-end"></div>
+</div></article>
+</div>
+
+        <!-- Footer -->
+        <footer>&copy; Copyright Message.</footer>
+    </div></div>
+</div>
+<!-- Load Javascripts -->
+<script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+<script type="text/javascript" src="/assets/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML,local/local"></script>
+
+<script>
+
+blog.url.parse();
+
+var load_categories = function() {
+    // Calls ajax load procedure.
+    blog.json.load(function(event) {
+        var cat_idx = {};
+        var jentries = blog.json.data.entries;
+        var show_only = blog.url.args['category'];
+        for (var i = 0; i < jentries.length; i++) {
+            var obj = jentries[i];
+            // Uploading entry categories.
+            var objcat = obj.categories;
+            for (var j = 0; j < obj.categories.length; j++) {
+                if (!cat_idx[objcat[j]])
+                    cat_idx[objcat[j]] = [];
+                cat_idx[objcat[j]] = cat_idx[objcat[j]].concat(obj);
+            }
+        }
+        // Sort by alphabetical order
+        var cat_lst = [];
+        for (var cat in cat_idx)
+            cat_lst = cat_lst.concat(cat);
+        cat_lst.sort();
+        // Received index, now pushing to document
+        for (var j = 0; j < cat_lst.length; j++) {
+            var cat = cat_lst[j];
+            var lis = cat_idx[cat];
+            if (show_only && show_only != cat)
+                continue;
+            $('#blog-categories-flag-end').before(
+                '<div class="tag-group">\
+                    <h5 class="tag-group-title" name="' + cat + '">' + cat + '</h5>\
+                </div>');
+            for (var i = 0; i < lis.length; i++) {
+                var obj = lis[i];
+                $('[name="' + cat + '"].tag-group-title').after('\
+                    <article class="tag-item">\
+                        <a class="tag-item-title" href="/article/?date=' + obj['date-id'] + '&id=' + obj['id'] + '">' + obj['title'] + '</a>\
+                    </article>');
+                continue;
+            }
+            continue;
+        };
+        // Finishing ajax procedure.
+        $('[name="blog-loading-identifier"]').html('');
+        return ;
+    }, []);
+    return ;
+}
+
+load_categories();
+
+</script>
+
+</body>
+</html>
