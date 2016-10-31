@@ -1245,6 +1245,13 @@ pre code {
     .sourceCode .kw {
         font-weight: bold;
         color: rgb(120, 187, 254); }
+    /* General.ControlStatement (?) */
+    .sourceCode .cf {
+        font-weight: bold;
+        color: rgb(120, 187, 254); }
+    /* General.BuiltInFunction (?) */
+    .sourceCode .bu {
+        color: rgb(208, 238, 221); }
     /* General.DataType */
     .sourceCode .dt {
         font-weight: bold;
