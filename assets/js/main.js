@@ -75,7 +75,7 @@ var blog = {
                 return false;
             if (blog.json.loaded && blog.contents.current_page >= blog.json.data.entries.length) {
                 var load_btn = $('#blog-contents-btn-load-more');
-                load_btn.removeClass('btn-info').addClass('btn-success');
+                load_btn.removeClass('btn-info').addClass('btn-danger');
                 load_btn.attr('disabled', 'disabled');
                 load_btn.html('No more articles');
                 return false;
@@ -87,40 +87,43 @@ var blog = {
             load_btn.html('Loading...');
             // Loading JSON
             blog.json.load(function(event) {
-            // Defining, getting sub-article
-            function load_articles(rem_count) {
-                // Recursion interrupt
-                if (rem_count <= 0)
-                    return ;
-                // Retrieving object
-                var jdata = blog.json.data;
-                if (blog.contents.current_page >= jdata.entries.length)
-                    return ;
-                // Show in reverse order.
-                var obj = jdata.entries[jdata.entries.length - 1 - blog.contents.current_page];
-                blog.contents.current_page++;
-                // Getting data from server
-                var html_event = $.get('/data/' + obj['date-id'] + '-' + obj['id'] + '-brief.html');
-                var wait_html = function(html_event, load_articles) {
-                    if (html_event.readyState <= 1) {
-                        setTimeout(wait_html, 15, html_event, load_articles);
+                // Defining, getting sub-article
+                function load_articles(rem_count) {
+                    // Recursion interrupt
+                    if (rem_count <= 0)
                         return ;
-                    }
-                    // Injecting data into HTML.
-                    var html_data = html_event.responseText;
-                    $('#blog-contents-end-flag').before(html_data);
-                    load_articles(rem_count - 1);
-                    return ;
-                };
-                wait_html(html_event, load_articles);
-                // Calling iteration...
-            }; load_articles(8);
-            // Setting thread lock status
-            blog.contents.loading = false;
-            // Changing icon status
-            var load_btn = $('#blog-contents-btn-load-more');
-            load_btn.removeClass('btn-warning').addClass('btn-info');
-            load_btn.html('Load more articles');
+                    // Retrieving object
+                    var jdata = blog.json.data;
+                    if (blog.contents.current_page >= jdata.entries.length)
+                        return ;
+                    // Show in reverse order.
+                    var obj = jdata.entries[jdata.entries.length - 1 - blog.contents.current_page];
+                    blog.contents.current_page++;
+                    // Getting data from server
+                    var html_event = $.get('/data/' + obj['date-id'] + '-' + obj['id'] + '-brief.html');
+                    var wait_html = function(html_event, load_articles) {
+                        if (html_event.readyState <= 1) {
+                            setTimeout(wait_html, 15, html_event, load_articles);
+                            return ;
+                        }
+                        // Injecting data into HTML.
+                        var html_data = html_event.responseText;
+                        $('#blog-contents-end-flag').before(html_data);
+                        load_articles(rem_count - 1);
+                        return ;
+                    };
+                    wait_html(html_event, load_articles);
+                    // Calling iteration...
+                }; load_articles(8);
+                // Waiting for a small while until we mark it finished
+                setTimeout(function() {
+                    // Setting thread lock status
+                    blog.contents.loading = false;
+                    // Changing icon status
+                    var load_btn = $('#blog-contents-btn-load-more');
+                    load_btn.removeClass('btn-warning').addClass('btn-info');
+                    load_btn.html('Load more articles');
+                }, 1250);
             }, [])
             // Finished procedure
             return true;
