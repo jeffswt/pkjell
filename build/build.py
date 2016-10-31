@@ -8,8 +8,8 @@ import os
 import pandoc
 import PIL.Image
 import re
+import sys
 import time
-
 
 """ consq_sub -- Consecutively substitute patterns in RegEx. """
 def consq_sub(s, *args):
@@ -54,9 +54,20 @@ def diff(a, b, ordered=False):
     return c
 
 """ Console logger """
+last_log_string = ''
 def log(s, *args):
+    global last_log_string
+    t = last_log_string
+    print('\r' * len(t) + ' ' * len(t) + '\r' * (len(t) + 1), end='')
     s = s % tuple(args)
-    print(s)
+    if s[:4] in {'... ', '!!! '}:
+        print(s, end='\n')
+        last_log_string = ''
+    else:
+        print(s, end='')
+        last_log_string = s
+    sys.stdout.flush()
+    return
 
 """ Mako renderer """
 def render_page(html_data, **additional_arguments):
@@ -306,9 +317,9 @@ def main():
                     log(' .. Skipping document.')
                     continue
                 else:
-                    log(' .. Detected HTML output change on document.')
+                    log('... Detected HTML output change on document.')
             else:
-                log(' .. Detected source change on document.')
+                log('... Detected source change on document.')
             pass
         # Defining link convertion utilities
         def link_convert(inp):
@@ -328,7 +339,7 @@ def main():
                         try:
                             f_handle = PIL.Image.open(get_native_path('/posts/%s/%s' % (p_path[0], p_path[1])), 'r')
                             img_out = '/data/%s-%s.jpeg' % (doc_id, os.path.splitext(p_path[1])[0])
-                            log(' .. * Exporting image "%s"...', p_path[1])
+                            log('... * Exporting image "%s"...', p_path[1])
                             f_handle.save(get_native_path(img_out), format='jpeg', quality=45, progressive=True)
                         except Exception:
                             log('!!! Error exporting image "%s".', p_path[1])
@@ -340,7 +351,7 @@ def main():
                         elif ext == 'cpp': f_type = 'C++'
                         elif ext == 'py': f_type = 'Python'
                         else: f_type = ''
-                        log(' .. * Embedding plain test "%s"...', p_path[1])
+                        log('... * Embedding plain test "%s"...', p_path[1])
                         new_ret = '\n```%s\n%s\n\n```\n' % (f_type, f_data)
                     # If it is otherwise, copy it.
                     else:
@@ -348,7 +359,7 @@ def main():
                         f_data = f_handle.read()
                         f_handle.close()
                         new_out = '/data/%s-%s' % (doc_id, p_path[1])
-                        log(' .. * Copying file "%s"...', p_path[1])
+                        log('... * Copying file "%s"...', p_path[1])
                         f_handle = open_file(new_out, 'wb')
                         f_handle.write(f_data)
                         f_handle.close()
@@ -412,7 +423,7 @@ def main():
         else:
             j_data['entries'].append(jentry)
             article_idx[doc_id] = len(j_data['entries']) - 1
-        log(' .. Compiled document "%s".', doc_id)
+        log('... Compiled document "%s".', doc_id)
         pass
     # Sorting pages according to time...
     log('==> Updating database...')
@@ -426,12 +437,12 @@ def main():
     j_data['entries'] = n_entries
     # Saving JSON data.
     jindex.save(j_data)
-    log(' .. Procedure complete.')
+    log('... Procedure complete.')
     return 0
 
 if __name__ == '__main__':
     t_begin = time.time()
     ret_code = main()
     t_end = time.time()
-    log('==> Build finished in %.3f seconds.', t_end - t_begin)
+    log('==> Build finished in %.3f seconds.\n', t_end - t_begin)
     exit(ret_code)
