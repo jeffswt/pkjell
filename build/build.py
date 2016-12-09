@@ -345,11 +345,10 @@ def main():
                             log('!!! Error exporting image "%s".', p_path[1])
                         new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'![\1](%s)' % img_out, new_ret)
                     # If it is text, then embed it.
-                    elif ext in {'txt', 'log', 'c', 'cpp', 'py'}:
+                    elif ext in {'txt', 'log', 'c', 'cpp', 'h', 'hpp', 'py', 'pyw'}:
                         f_data = read_file('/posts/%s/%s' % (p_path[0], p_path[1]))
-                        if ext == 'c': f_type = 'C'
-                        elif ext == 'cpp': f_type = 'C++'
-                        elif ext == 'py': f_type = 'Python'
+                        if ext in {'c', 'cpp', 'h', 'hpp'}: f_type = 'C++'
+                        elif ext in {'py', 'pyw'}: f_type = 'Python'
                         else: f_type = ''
                         log('... * Embedding plain test "%s"...', p_path[1])
                         new_ret = '\n```%s\n%s\n\n```\n' % (f_type, f_data)
@@ -363,7 +362,8 @@ def main():
                         f_handle = open_file(new_out, 'wb')
                         f_handle.write(f_data)
                         f_handle.close()
-                        new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'![\1](%s)' % new_out, new_ret)
+                        # new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'[\1](%s)' % new_out, new_ret)
+                        new_ret = re.sub(r'^!\[(.*?)\]\(.*\)$', r'<a href="%s" download="%s">\1</a>' % (new_out, p_path[1]), new_ret)
                     # Restoring string in line
                     line = new_ret.join(line.split(pict_path))
                 out.append(line)
