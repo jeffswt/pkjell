@@ -109,6 +109,7 @@ var blog = {
                         // Injecting data into HTML.
                         var html_data = html_event.responseText;
                         $('#blog-contents-end-flag').before(html_data);
+                        renderMathInElement(document.body);
                         load_articles(rem_count - 1);
                         return ;
                     };

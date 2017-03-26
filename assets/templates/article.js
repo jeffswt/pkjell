@@ -4,6 +4,7 @@ var get_path = '/data/' + params['date'] + '-' + params['id'] + '-post.html';
 
 $.get(get_path).success(function(event) {
     $('#blog-article-share-buttons').before(event);
+    renderMathInElement(document.body);
     return ;
 });
 
