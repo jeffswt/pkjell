@@ -2,52 +2,53 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Blog Title</title>
-    <meta name="description" content="Blog Description">
+  <title>Blog Title</title>
+  <meta name="description" content="Blog Description">
 
-    <!-- CSS files -->
-    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
+  <!-- CSS files -->
+  <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/js/katex/katex.min.css">
 
-    <!-- Icons -->
-    <link rel="shortcut icon" href="/assets/images/favicon.png">
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/assets/images/favicon.png">
 </head>
 
 <body><div class="row">
-    <!-- Navigation bar -->
-    <div class="col s12 m3"><div class="table cover"><div class="cover-card table-cell table-middle">
-        <body color=f0a123>
-        <!-- Avatar -->
-        <img src="/assets/images/avatar.png" alt="" class="avatar">
-        <a href="/" class="author_name">Author Name</a>
-        <span class="author_job">Author Job</span>
-        <span class="author_bio mbm">Author Description</span>
-        <!-- Blog navigation -->
-        <nav class="nav"><ul class="nav-list">
-            <li class="nav-item">
-                <a href="/archive/">Archive</a>
-                <span>/</span>
-            </li>
-            <li class="nav-item">
-                <a href="/categories/">Categories</a>
-                <span>/</span>
-            </li>
-            <li class="nav-item">
-                <a href="/tags/">Tags</a>
-            </li>
-        </ul></nav>
-        <!-- Social Links -->
-        <div class="cover-card"><ul>
-            <li><a href="mailto:example@example.com" class="social-link-item" target="_blank"><i class="fa fa-fw fa-envelope"></i></a></li>
-            <li><a href="https://github.com/" class="social-link-item" target="_blank"><i class="fa fa-fw fa-github"></i></a></li>
-        </ul></div>
-    </div></div></div>
-    <!-- Main body -->
-    <div class="col s12 m9"><div class="post-listing">
+  <!-- Navigation bar -->
+  <div class="col s12 m3"><div class="table cover"><div class="cover-card table-cell table-middle">
+    <body color=f0a123>
+    <!-- Avatar -->
+    <img src="/assets/images/avatar.png" alt="" class="avatar">
+    <a href="/" class="author_name">Author Name</a>
+    <span class="author_job">Author Job</span>
+    <span class="author_bio mbm">Author Description</span>
+    <!-- Blog navigation -->
+    <nav class="nav"><ul class="nav-list">
+      <li class="nav-item">
+        <a href="/archive/">Archive</a>
+        <span>/</span>
+      </li>
+      <li class="nav-item">
+        <a href="/categories/">Categories</a>
+        <span>/</span>
+      </li>
+      <li class="nav-item">
+        <a href="/tags/">Tags</a>
+      </li>
+    </ul></nav>
+    <!-- Social Links -->
+    <div class="cover-card"><ul>
+      <li><a href="mailto:example@example.com" class="social-link-item" target="_blank"><i class="fa fa-fw fa-envelope"></i></a></li>
+      <li><a href="https://github.com/" class="social-link-item" target="_blank"><i class="fa fa-fw fa-github"></i></a></li>
+    </ul></div>
+  </div></div></div>
+  <!-- Main body -->
+  <div class="col s12 m9"><div class="post-listing">
 
 <div id="blog-article-share-buttons" class="share-buttons">
   <h6>Share on: </h6>
@@ -67,14 +68,20 @@
   </ul>
 </div>
 
-        <!-- Footer -->
-        <footer>&copy; Copyright Message.</footer>
-    </div></div>
+    <!-- Footer -->
+    <footer>&copy; Copyright Message.</footer>
+  </div></div>
 </div>
+
 <!-- Load Javascripts -->
 <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="/assets/js/main.js"></script>
-<script type="text/javascript" src="/assets/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML,local/local"></script>
+<script type="text/javascript" src="/assets/js/katex/katex.min.js"></script>
+<script type="text/javascript" src="/assets/js/katex/contrib/auto-render.min.js"></script>
+
+<script>
+renderMathInElement(document.body);
+</script>
 
 <script>
 
