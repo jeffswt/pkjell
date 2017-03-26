@@ -90,6 +90,8 @@ var get_path = '/data/' + params['date'] + '-' + params['id'] + '-post.html';
 
 $.get(get_path).success(function(event) {
     $('#blog-article-share-buttons').before(event);
+    var b_title = RegExp('<h1 title="(.*?)">').exec(event)[1];
+    document.title = b_title + " - " + document.title;
     renderMathInElement(document.body);
     return ;
 });
