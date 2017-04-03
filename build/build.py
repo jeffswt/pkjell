@@ -11,6 +11,9 @@ import re
 import sys
 import time
 
+ignore_old_articles = False
+old_articles_timestamp = '2017-01-01'
+
 """ consq_sub -- Consecutively substitute patterns in RegEx. """
 def consq_sub(s, *args):
     if len(args) % 2 != 0:
@@ -270,6 +273,10 @@ def main():
     # Compiling articles
     for fname in temp_src:
         log('==> Compiling source of post "%s".', fname)
+        # Enforcing newest posts
+        if fname < old_articles_timestamp and ignore_old_articles:
+            log(' .. The article is too old, skipping.')
+            continue
         # Parsing lines
         fdata = read_file('/posts/%s' % fname)
         flines = fdata.split('\n')
