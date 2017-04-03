@@ -1278,9 +1278,8 @@ pre code {
 
 /* LAYOUT CSS */
 .cover {
-    background-blend-mode: screen;
-    background-image: url(/assets/images/sidebar.jpeg), -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 90%, rgba(255, 255, 255, 0.15) 90%, rgba(255, 255, 255, 1) 100%);
-    background-image: url(/assets/images/sidebar.jpeg), -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 90%, rgba(255, 255, 255, 0.15) 90%, rgba(255, 255, 255, 1) 100%);
+    background-color: rgb(88, 168, 208);
+    background-image: url(/assets/images/sidebar.jpeg);
     position: fixed;
     text-align: center;
     width: 100%;
@@ -1296,8 +1295,6 @@ pre code {
             padding: 30px; } }
     @media only screen and (min-width: 992px) {
         .cover {
-            background-image: url(/assets/images/sidebar.jpeg), -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 90%, rgba(255, 255, 255, 0.15) 90%, rgba(255, 255, 255, 1) 100%);
-            background-image: url(/assets/images/sidebar.jpeg), -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 90%, rgba(255, 255, 255, 0.15) 90%, rgba(255, 255, 255, 1) 100%);
             height: 100vh;
             position: initial;
             padding-right: 10%;
