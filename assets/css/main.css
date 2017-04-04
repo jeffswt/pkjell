@@ -153,6 +153,7 @@ template {
  * Remove the gray background color from active links in IE 10.
  */
 a {
+    word-break: break-all;
     background-color: transparent; }
 
 /**
@@ -1202,7 +1203,7 @@ code {
     padding: 3px 0px;
     margin: 0px 0px;
     border-radius: 2px;
-    white-space: nowrap; }
+    word-break: break-all; }
 
 pre {
     overflow: normal;
