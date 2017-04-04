@@ -357,7 +357,7 @@ def main():
                         if ext in {'c', 'cpp', 'h', 'hpp'}: f_type = 'C++'
                         elif ext in {'py', 'pyw'}: f_type = 'Python'
                         else: f_type = ''
-                        log('... * Embedding plain test "%s"...', p_path[1])
+                        log('... * Embedding plain text "%s"...', p_path[1])
                         new_ret = '\n```%s\n%s\n\n```\n' % (f_type, f_data)
                     # If it is otherwise, copy it.
                     else:
