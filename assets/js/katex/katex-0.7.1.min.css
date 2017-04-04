@@ -94,6 +94,11 @@
   font-weight: normal;
   font-style: normal;
 }
+span.math.display {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: scroll;
+}
 .katex-display {
   display: block;
   margin: 1em 0;
@@ -101,12 +106,13 @@
 }
 .katex-display > .katex {
   display: inline-block;
+  white-space: nowrap;
   text-align: initial;
 }
 .katex {
   font: normal 1.21em KaTeX_Main, Times New Roman, serif;
   line-height: 1.2;
-  white-space: nowrap;
+  white-space: normal;
   text-indent: 0;
 }
 .katex .katex-html {
