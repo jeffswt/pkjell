@@ -476,8 +476,9 @@ td {
     vertical-align: bottom; }
 
 table {
-    width: 100%;
-    display: table; }
+    max-width: 100%;
+    display: table;
+    overflow-x: scroll; }
     table.bordered > thead > tr, table.bordered > tbody > tr {
         border-bottom: 1px solid #d0d0d0; }
     table.striped > tbody > tr:nth-child(odd) {
@@ -502,7 +503,7 @@ thead {
 
 td,
 th {
-    padding: 15px 5px;
+    padding: 5px 10px;
     display: table-cell;
     text-align: left;
     vertical-align: middle;
