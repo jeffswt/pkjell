@@ -1,6 +1,7 @@
 
 print('==> Loading web server...')
 
+import gzip
 import os
 import re
 import socket
@@ -16,6 +17,8 @@ import tornado.ioloop
 import tornado.web
 
 WEB_PORT = 80
+ENABLE_GZIP = True
+DISABLE_CACHE = True
 
 """ consq_sub -- Consecutively substitute patterns in RegEx. """
 def consq_sub(s, *args):
@@ -54,8 +57,19 @@ class StaticHandler(tornado.web.RequestHandler):
         # File actually exists, sending data
         self.set_status(200, "OK")
         self._headers = tornado.httputil.HTTPHeaders()
-        self.add_header('Cache-Control', 'max-age=0')
+        if DISABLE_CACHE:
+            self.add_header('Cache-Control', 'max-age=0')
+        else:
+            self.add_header('Cache-Control', 'max-age=900')
         self.add_header('Connection', 'close')
+
+        # Using gzip to compress the data, if allowed
+        if ENABLE_GZIP and 'gzip' in self.request.headers['Accept-Encoding']:
+            g_file_data = gzip.compress(file_data, compresslevel=9)
+            if len(g_file_data) < len(file_data):
+                file_data = g_file_data
+                self.add_header('Content-Encoding', 'gzip')
+            pass
         self.add_header('Content-Length', str(len(file_data)))
 
         # Push result to client in one blob
@@ -80,7 +94,8 @@ def main():
             (r'^/(.*)$', StaticHandler),
         ],
         xsrf_cookies=False, # True to prevent CSRF third party attacks
-        compress_response=True # True to support GZIP encoding when transferring data
+        compress_response=True, # True to support GZIP encoding when transferring data
+        gzip=True
     )
     # Starting server
     web_sockets = tornado.netutil.bind_sockets(80,
