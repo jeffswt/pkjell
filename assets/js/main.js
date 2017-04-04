@@ -116,5 +116,36 @@ var blog = {
             // Finished procedure
             return true;
         }
+    },
+    hook: {
+        katex_hook : null,
+        katex : function() {
+            // Store katex hook to local area
+            blog.hook.katex_hook = katex.render;
+            // Destroy remote function
+            katex.render = null;
+            // Create desired hook function
+            function remote_hook(rend_str, target, cfg) {
+                rend_str = rend_str.replace('\n', ' ');
+                rend_arr = rend_str.split('\\\\');
+                if (rend_arr.length <= 1) {
+                    blog.hook.katex_hook(rend_str, target, cfg);
+                } else if (rend_arr.length > 1) {
+                    for (var i = 0; i < rend_arr.length; i++) {
+                        rend_s = rend_arr[i];
+                        elem = document.createElement('p');
+                        blog.hook.katex_hook(rend_s, elem, cfg);
+                        target.appendChild(elem);
+                    }
+                }
+                return ;
+            }
+            // Join to global function
+            katex.render = remote_hook;
+            // Succeeded
+            return true;
+        }
     }
 };
+
+blog.hook.katex();
